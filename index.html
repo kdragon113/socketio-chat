@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+    <head>
+        <title>Socket.IO chat</title>
+        <link rel="stylesheet" href="/css/style.css" />
+        <script src="/socket.io/socket.io.js"></script>
+        <!-- <script src="/js/app.js"></script> -->
+    </head>
+    <body>
+        <form id="form" action="">
+            <input
+                id="group"
+                placeholder="Nhóm"
+                autocomplete="off"
+                value="Haraworks"
+            />
+            <br />
+            <input id="user" placeholder="User" autocomplete="off" />
+            <br />
+            <input
+                id="input"
+                placeholder="Nội dung"
+                autocomplete="off"
+                value="Text "
+            />
+            <button>Send</button>
+        </form>
+        <ul id="messages"></ul>
+    </body>
+
+    <script>
+        var socket = io();
+
+        var form = document.getElementById("form");
+        var input = document.getElementById("input");
+        var group = document.getElementById("group");
+        var user = document.getElementById("user");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            if (input.value) {
+                const objMessage = {
+                    group: group.value,
+                    content: input.value,
+                    user: user.value,
+                };
+
+                console.log(objMessage);
+                socket.emit("chat message", objMessage);
+                input.value = "";
+            }
+        });
+
+        socket.on("chat message", function (msg) {
+            if (group.value == msg.group) {
+                debugger;
+                var item = document.createElement("li");
+                const content = `[${msg.user}]: ${msg.content}`;
+                item.textContent = content;
+                messages.appendChild(item);
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        });
+    </script>
+</html>
